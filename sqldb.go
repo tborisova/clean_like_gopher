@@ -8,14 +8,19 @@ package clean_like_gopher
    strategy - contains the selected strategy for cleaning the DB
    options - options for additional info - [except, only]
 */
-type Mysql struct{
-  Name string
-  Stategy string
-  Options map[string][]string
+type Mysql struct {
+	Name    string
+	Stategy string
+	Options map[string][]string
+}
+
+func NewMysqlCleaningGopher(name string) *Mysql {
+	return &Mysql{Name: name}
 }
 
 // Clean with Mysql adapter
-func (m *Mysql) Clean() {}
+func (m *Mysql) Clean(options map[string][]string) {}
+func (m *Mysql) Start()                            {}
 
 // Clean with Mysql adapter - transaction strategy
 func (m *Mysql) CleanWithTransaction() {}
@@ -27,6 +32,6 @@ func (m *Mysql) CleanWithTruncation() {}
 func (m *Mysql) CleanWithDeletion() {}
 
 // For debug purposes
-func (m Mysql) String() string{
-  return "Mysql adapter, " + "database name: " + m.Name + ", Stategy: " + m.Stategy
+func (m Mysql) String() string {
+	return "Mysql adapter, " + "database name: " + m.Name + ", Stategy: " + m.Stategy
 }

@@ -1,24 +1,26 @@
 package clean_like_gopher
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
-func TestNewCleaningGopherWithNonExistingDB(t *testing T){}
-func TestNewCleaningGopherWithNonExistingAdapter(t *testing T){}
-func TestNewCleaningGopherWithIncorrectOptions(t *testing T){}
-func TestNewCleaningGopherWithIncorrectStrategy(t *testing T){}
+func TestNewCleaningGopherMongoWithNonExistingAdapter(t *testing.T) {
+	_, err := NewCleaningGopher("gopher", "dbname", "localhost", "27011")
 
-func TestMongoCleanAll(t *testing T){}
-func TestMongoCleanOnly(t *testing T){}
-func TestMongoCleanExcept(t *testing T){}
+	if err == nil {
+		t.Error("Expected error since gopher is not adapter")
+	}
+}
 
-func TestRedisCleanAll(t *testing T){}
-func TestRedisCleanExcept(t *testing T){}
-func TestRedisCleanOnly(t *testing T){}
+func TestWhenAdapterIsMongoThereIsMongoInstance(t *testing.T) {
+	gopher_cleaner, _ := NewCleaningGopher("mongo", "dbname", "localhost", "27011")
+	mongo_inst, _ := NewMongoCleaningGopher("dbname", "localhost", "27011")
+	if reflect.TypeOf(gopher_cleaner) != reflect.TypeOf(mongo_inst) {
+		t.Error("Expected type Mongo got %s", reflect.TypeOf(gopher_cleaner))
+	}
+}
 
-func TestMysqlCleanOnly(t *testing T){}
-func TestMysqlCleanExcept(t *testing T){}
-func TestMysqlCleanAll(t *testing T){}
-func TestMysqlCleanWithTransaction(t *testing T){}
-func TestMysqlCleanWithTruncation(t *testing T){}
-func TestMysqlCleanWithDeletion(t *testing T){}
+func TestNewCleaningGopherIsMysql(t *testing.T) {}
 
+func TestNewCleaningGopherIsRedis(t *testing.T) {}
