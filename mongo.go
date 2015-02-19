@@ -3,7 +3,6 @@ package clean_like_gopher
 import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"strings"
 )
 
 /*
@@ -49,32 +48,3 @@ func (m Mongo) String() string {
 	return "Mongo adapter"
 }
 
-func stringInSlice(a string, list []string) bool {
-	for _, b := range list {
-		if b == a {
-			return true
-		}
-	}
-	return false
-}
-
-func CollectionCanBeDeleted(name string, options map[string][]string) bool {
-
-	if strings.Contains(name, "system") {
-		return false
-	}
-
-	if len(options) == 0 {
-		return true
-	}
-
-	if len(options["only"]) == 0 && len(options["except"]) != 0 {
-		return !stringInSlice(name, options["except"])
-	}
-
-	if len(options["except"]) == 0 && len(options["only"]) != 0 {
-		return stringInSlice(name, options["only"])
-	}
-
-	return true
-}

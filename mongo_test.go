@@ -6,16 +6,6 @@ import (
 	"testing"
 )
 
-type Person struct {
-	Name  string
-	Phone string
-}
-
-type Animal struct {
-	Kind      string
-	Character string
-}
-
 func makeDbDirty() {
 	session, err := mgo.Dial("localhost:27017")
 	if err != nil {

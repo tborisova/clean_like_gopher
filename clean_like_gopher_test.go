@@ -5,6 +5,16 @@ import (
 	"testing"
 )
 
+type Person struct {
+  Name  string
+  Phone string
+}
+
+type Animal struct {
+  Kind      string
+  Character string
+}
+
 func TestNewCleaningGopherMongoWithNonExistingAdapter(t *testing.T) {
 	_, err := NewCleaningGopher("gopher", "dbname", "localhost", "27011")
 
