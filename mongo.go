@@ -37,7 +37,6 @@ func (m *Mongo) Clean(options map[string][]string) {
 			db.C(collection_name).RemoveAll(bson.M{})
 		}
 	}
-	m.session.Close()
 }
 
 // Clean with Mongo adapter - truncation strategy
@@ -48,3 +47,6 @@ func (m Mongo) String() string {
 	return "Mongo adapter"
 }
 
+func (m Mongo) Close(){
+	m.session.Close()
+}

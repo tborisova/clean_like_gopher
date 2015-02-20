@@ -17,6 +17,7 @@ type Redis struct {
 // Clean with Redis adapter
 func (m *Redis) Clean(options map[string][]string) {}
 func (m *Redis) Start()                            {}
+func (m *Redis) Close()                            {}
 
 // Clean with Redis adapter - truncation strategy
 func (m *Redis) CleanWithTruncation() {}

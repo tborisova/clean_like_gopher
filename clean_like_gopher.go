@@ -8,6 +8,7 @@ import(
 type Generic interface {
 	Clean(options map[string][]string)
 	Start()
+	Close()
 }
 
 type GopherError struct {
@@ -26,8 +27,8 @@ func NewCleaningGopher(adapter, name, host, port string) (Generic, error) {
 	}
 
 	if adapter == "mysql" {
-		ad := NewMysqlCleaningGopher(name)
-		return ad, nil
+		ad, err := NewMysqlCleaningGopher(name, host, port)
+		return ad, err
 	}
 
 	if adapter == "redis" {
@@ -48,7 +49,6 @@ func stringInSlice(a string, list []string) bool {
 }
 
 func CollectionCanBeDeleted(name string, options map[string][]string) bool {
-
 	if strings.Contains(name, "system") {
 		return false
 	}
@@ -68,9 +68,9 @@ func CollectionCanBeDeleted(name string, options map[string][]string) bool {
 	return true
 }
 
-func SelectStrategy(options map[string][]string){
+func SelectStrategy(options map[string][]string) string{
 	if len(options) != 0 && len(options["stategy"]) != 0 {
-		return options["strategy"]
+		return options["strategy"][0]
 	} else {
 		return "truncation"
 	}

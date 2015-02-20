@@ -6,17 +6,11 @@ import (
 	"testing"
 )
 
+var	session, _ = mgo.Dial("localhost:27017")
+
 func makeDbDirty() {
-	session, err := mgo.Dial("localhost:27017")
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-
-	session.SetMode(mgo.Monotonic, true)
-
 	c := session.DB("test").C("people")
-	err = c.Insert(&Person{"Ale", "+55 53 8116 9639"},
+	err := c.Insert(&Person{"Ale", "+55 53 8116 9639"},
 		&Person{"Cla", "+55 53 8402 8510"})
 
 	c = session.DB("test").C("animals")
@@ -38,18 +32,14 @@ func TestNewCleaningGopherMongoWithIncorrectConnection(t *testing.T) {
 func TestMongoCleanAll(t *testing.T) {
 	m, _ := NewCleaningGopher("mongo", "test", "localhost", "27017")
 	m.Start()
-	makeDbDirty()
-	m.Clean(nil)
 
-	session, err := mgo.Dial("localhost:27017")
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-	session.SetMode(mgo.Monotonic, true)
+	makeDbDirty()
+
+	m.Clean(nil)
+	m.Close()
 
 	people := session.DB("test").C("people")
-	count, err := people.Count()
+	count, _ := people.Count()
 
 	if count != 0 {
 		t.Errorf("Expected db to be empty")
@@ -65,18 +55,12 @@ func TestMongoCleanOnly(t *testing.T) {
 	options := make(map[string][]string)
 	options["only"] = []string{"animals"}
 	m.Clean(options)
-
-	session, err := mgo.Dial("localhost:27017")
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-	session.SetMode(mgo.Monotonic, true)
+	m.Close()
 
 	people := session.DB("test").C("people")
-	count_of_peoples, err := people.Count()
+	count_of_peoples, _ := people.Count()
 	animals := session.DB("test").C("animals")
-	count_of_animals, err := animals.Count()
+	count_of_animals, _ := animals.Count()
 
 	if count_of_peoples == 0 {
 		t.Errorf("Expected people collection to not be deleted")
@@ -94,18 +78,12 @@ func TestMongoCleanExcept(t *testing.T) {
 	options := make(map[string][]string)
 	options["except"] = []string{"animals"}
 	m.Clean(options)
-
-	session, err := mgo.Dial("localhost:27017")
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-	session.SetMode(mgo.Monotonic, true)
+	m.Close()
 
 	people := session.DB("test").C("people")
-	count_of_people, err := people.Count()
+	count_of_people, _ := people.Count()
 	animals := session.DB("test").C("animals")
-	count_of_animals, err := animals.Count()
+	count_of_animals, _ := animals.Count()
 
 	if count_of_animals == 0 {
 		t.Errorf("Expected animals to not be deleted")
@@ -122,18 +100,12 @@ func TestNewCleaningGopherMongoInvalidOptionsAreIgnored(t *testing.T) {
 	options := make(map[string][]string)
 	options["invalid"] = []string{"animals"}
 	m.Clean(options)
-
-	session, err := mgo.Dial("localhost:27017")
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-	session.SetMode(mgo.Monotonic, true)
+	m.Close()
 
 	people := session.DB("test").C("people")
-	count_of_people, err := people.Count()
+	count_of_people, _ := people.Count()
 	animals := session.DB("test").C("animals")
-	count_of_animals, err := animals.Count()
+	count_of_animals, _ := animals.Count()
 
 	if count_of_animals != 0 {
 		t.Errorf("Expected animals to be deleted")
