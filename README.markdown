@@ -18,14 +18,14 @@ like gopher is to ensure that the DB is clean between tests.
   import 'github/tborisova/clean_like_gopher'
   ...
 
-  options := make(map[string][]string)
-  options["only"] = []string{"people"}
+  options = map[string][]string{"only": ["people"]}
   m := clean_like_gopher.NewCleaningGopher("test", "mongo", "truncation", options) // clean collection 'test' using mongo driver and truncation strategy
   // m.Start() - only for transaction strategy
   ...
   dirty db
   ...
   m.Clean()
+  m.Close() // after all specs or after each spec
 ```
 
 Availabe strategies:

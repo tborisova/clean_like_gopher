@@ -7,6 +7,7 @@ import (
 )
 
 var db, _ = sql.Open("mysql", "root:@/golangtest")
+var mysqlStartOptions = map[string]string{"username":"root", "dbname": "golangtest"}
 
 func makeMysqlDbDirty() {
 
@@ -32,7 +33,7 @@ func makeMysqlDbDirty() {
 }
 
 func TestMysqlCleanOnly(t *testing.T)            {
-  m, _ := NewCleaningGopher("mysql", "golangtest", "root", "10000")
+  m, _ := NewCleaningGopher("mysql", mysqlStartOptions)
   m.Start()
 
   makeMysqlDbDirty()
@@ -64,8 +65,9 @@ func TestMysqlCleanOnly(t *testing.T)            {
     t.Errorf("Expected animals to be deleted")
   }
 }
+
 func TestMysqlCleanExcept(t *testing.T)          {
-  m, _ := NewCleaningGopher("mysql", "golangtest", "root", "10000")
+  m, _ := NewCleaningGopher("mysql", mysqlStartOptions)
   m.Start()
 
   makeMysqlDbDirty()
@@ -97,8 +99,9 @@ func TestMysqlCleanExcept(t *testing.T)          {
     t.Errorf("Expected animals to not be deleted")
   }
 }
+
 func TestMysqlCleanAll(t *testing.T)             {
-  m, _ := NewCleaningGopher("mysql", "golangtest", "root", "10000")
+  m, _ := NewCleaningGopher("mysql", mysqlStartOptions)
   m.Start()
 
   makeMysqlDbDirty()
@@ -129,10 +132,82 @@ func TestMysqlCleanAll(t *testing.T)             {
   }
 }
 
-func TestMysqlNewCleaningGopherWithIncorrectConnection(t *testing.T) {}
-func TestMysqlNewCleaningGopherWithNonExistingAdapter(t *testing.T) {}
-func TestMysqlNewCleaningGopherWithIncorrectOptions(t *testing.T)   {}
-func TestMysqlNewCleaningGopherWithIncorrectStrategy(t *testing.T)  {}
-func TestMysqlCleanWithTransaction(t *testing.T) {}
-func TestMysqlCleanWithTruncation(t *testing.T)  {}
-func TestMysqlCleanWithDeletion(t *testing.T)    {}
+func TestMysqlNewCleaningGopherWithIncorrectDbOptions(t *testing.T) {
+  StartOptions := map[string]string{"dbname": "golangtest"}
+
+  _, err := NewCleaningGopher("mysql", StartOptions)
+
+  if err == nil {
+    t.Errorf("Expected error for missing username!")
+  }
+  
+  StartOptions = map[string]string{"username": "root"}
+
+  _, err = NewCleaningGopher("mysql", StartOptions)
+
+  if err == nil {
+    t.Errorf("Expected error for missing db name!")
+  }
+}
+
+func TestMysqlCleanShouldWorkTwice(t *testing.T){
+  m, _ := NewCleaningGopher("mysql", mysqlStartOptions)
+  m.Start()
+
+  makeMysqlDbDirty()
+
+  m.Clean(nil)
+
+  var count int
+  row := db.QueryRow("SELECT count(id) as count FROM people")
+  _ = row.Scan(&count)
+
+  if count != 0 {
+    t.Errorf("Expected people collection to be deleted")
+  }
+
+  row = db.QueryRow("SELECT count(id) as count FROM users")
+  _ = row.Scan(&count)
+  
+  if count != 0 {
+    t.Errorf("Expected users collection to be deleted")
+  }
+
+  row = db.QueryRow("SELECT count(id) as count FROM animals")
+  _ = row.Scan(&count)
+
+  if count != 0 {
+    t.Errorf("Expected animals to be deleted")
+  }
+
+  makeMysqlDbDirty()
+  m.Clean(nil)
+  
+  row = db.QueryRow("SELECT count(id) as count FROM people")
+  _ = row.Scan(&count)
+
+  if count != 0 {
+    t.Errorf("Expected people collection to be deleted")
+  }
+
+  row = db.QueryRow("SELECT count(id) as count FROM users")
+  _ = row.Scan(&count)
+  
+  if count != 0 {
+    t.Errorf("Expected users collection to be deleted")
+  }
+
+  row = db.QueryRow("SELECT count(id) as count FROM animals")
+  _ = row.Scan(&count)
+
+  if count != 0 {
+    t.Errorf("Expected animals to be deleted")
+  }
+
+  m.Close()
+
+}
+
+func TestMysqlNewCleaningGopherWithIncorrectStrategy(t *testing.T)  {} //mysql uses truncation by default
+func TestMysqlCleanWithTruncation(t *testing.T)  {} // not sure how to test it
+func TestMysqlCleanWithDeletion(t *testing.T)    {} // not sure how to test it

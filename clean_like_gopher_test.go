@@ -16,7 +16,9 @@ type Animal struct {
 }
 
 func TestNewCleaningGopherMongoWithNonExistingAdapter(t *testing.T) {
-	_, err := NewCleaningGopher("gopher", "dbname", "localhost", "27011")
+  options := map[string]string{"user":"root", "dbname": "dbname", "host":"localhost", "port":"27011"}
+
+	_, err := NewCleaningGopher("gopher", options)
 
 	if err == nil {
 		t.Error("Expected error since gopher is not adapter")
@@ -24,8 +26,10 @@ func TestNewCleaningGopherMongoWithNonExistingAdapter(t *testing.T) {
 }
 
 func TestWhenAdapterIsMongoThereIsMongoInstance(t *testing.T) {
-	gopher_cleaner, _ := NewCleaningGopher("mongo", "dbname", "localhost", "27011")
-	mongo_inst, _ := NewMongoCleaningGopher("dbname", "localhost", "27011")
+  options := map[string]string{"user":"root", "dbname": "dbname", "host":"localhost", "port":"27011"}
+
+	gopher_cleaner, _ := NewCleaningGopher("mongo", options)
+	mongo_inst, _ := NewMongoCleaningGopher(options)
 	if reflect.TypeOf(gopher_cleaner) != reflect.TypeOf(mongo_inst) {
 		t.Error("Expected type Mongo got %s", reflect.TypeOf(gopher_cleaner))
 	}

@@ -22,8 +22,8 @@ func (m *Redis) Close()                            {}
 // Clean with Redis adapter - truncation strategy
 func (m *Redis) CleanWithTruncation() {}
 
-func NewRedisCleaningGopher(name string) *Redis {
-	return &Redis{Name: name}
+func NewRedisCleaningGopher(options map[string]string) *Redis {
+	return &Redis{Name: options["dbName"]}
 }
 
 // For debug purposes

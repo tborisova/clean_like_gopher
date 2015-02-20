@@ -20,19 +20,19 @@ func (e *GopherError) Error() string {
 }
 
 // Creates new Cleaner based on the chosen adapter
-func NewCleaningGopher(adapter, name, host, port string) (Generic, error) {
+func NewCleaningGopher(adapter string, options map[string]string) (Generic, error) {
 	if adapter == "mongo" {
-		ad, err := NewMongoCleaningGopher(name, host, port)
+		ad, err := NewMongoCleaningGopher(options)
 		return ad, err
 	}
 
 	if adapter == "mysql" {
-		ad, err := NewMysqlCleaningGopher(name, host, port)
+		ad, err := NewMysqlCleaningGopher(options)
 		return ad, err
 	}
 
 	if adapter == "redis" {
-		ad := NewRedisCleaningGopher(name)
+		ad := NewRedisCleaningGopher(options)
 		return ad, nil
 	}
 
