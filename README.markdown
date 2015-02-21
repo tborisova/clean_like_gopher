@@ -3,6 +3,8 @@
 Clean like gopher is inspired from [database_cleaner](https://github.com/DatabaseCleaner/database_cleaner). The purpose of clean
 like gopher is to ensure that the DB is clean between tests.
 
+[![GoDoc](https://godoc.org/github.com/tborisova/clean_like_gopher?status.png)](https://godoc.org/github.com/tborisova/clean_like_gopher)
+
 ## TODO:
  * Add transaction for mysql
  * Implement redis cleaner
