@@ -10,7 +10,7 @@ like gopher is to ensure that the DB is clean between tests.
  * Implement redis cleaner
  * Use ginkgo for test
  * Write better tests for different strategies
- * 
+ 
  
 ## Supported drivers
    * [database/sql](http://golang.org/pkg/database/sql/) 
@@ -44,7 +44,7 @@ like gopher is to ensure that the DB is clean between tests.
 Availabe strategies:
 
   * For mysql:
-    * truncation(default), deletion, transaction
+    * truncation(default), deletion, transaction (in future development)
   * For mongo:
     * truncation - default
   * For redis:
