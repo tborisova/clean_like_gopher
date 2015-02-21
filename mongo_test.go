@@ -6,10 +6,9 @@ import (
 	"testing"
 )
 
-var	session, _ = mgo.Dial("localhost:27017")
-var mongoStartOptions = map[string]string{"host":"localhost", "dbName": "test", "port": "27017"}
+var mongoStartOptions = map[string]string{"host": "localhost", "dbName": "test", "port": "27017"}
 
-func makeDbDirty() {
+func makeDbDirty(session *mgo.Session) {
 	c := session.DB("test").C("people")
 	err := c.Insert(&Person{"Ale", "+55 53 8116 9639"},
 		&Person{"Cla", "+55 53 8402 8510"})
@@ -22,7 +21,7 @@ func makeDbDirty() {
 	}
 }
 
-func CountRows(dbName, collectionName string) int {
+func CountRows(dbName, collectionName string, session *mgo.Session) int {
 	collection := session.DB(dbName).C(collectionName)
 	count, _ := collection.Count()
 
@@ -30,7 +29,7 @@ func CountRows(dbName, collectionName string) int {
 }
 
 func TestNewCleaningGopherMongoWithIncorrectConnection(t *testing.T) {
-	dbIncorrectOptions := map[string]string{"host":"localhost", "dbName": "test", "port": "27010"}
+	dbIncorrectOptions := map[string]string{"host": "localhost", "dbName": "test", "port": "27010"}
 	_, err := NewCleaningGopher("mongo", dbIncorrectOptions)
 
 	if err == nil {
@@ -40,90 +39,94 @@ func TestNewCleaningGopherMongoWithIncorrectConnection(t *testing.T) {
 
 func TestMongoCleanAll(t *testing.T) {
 	m, _ := NewCleaningGopher("mongo", mongoStartOptions)
-	m.Start()
+	session, _ := mgo.Dial("localhost:27017")
+	defer session.Close()
 
-	makeDbDirty()
+	makeDbDirty(session)
 
 	m.Clean(nil)
 	m.Close()
 
-	count_of_people := CountRows("test", "people")
-	count_of_animals := CountRows("test", "animals")	
+	countOfPeople := CountRows("test", "people", session)
+	countOfAnimals := CountRows("test", "animals", session)
 
-	if count_of_animals != 0 || count_of_people != 0{
+	if countOfAnimals != 0 || countOfPeople != 0 {
 		t.Errorf("Expected db to be empty")
 	}
 }
 
 func TestMongoCleanOnly(t *testing.T) {
 	m, _ := NewCleaningGopher("mongo", mongoStartOptions)
-	m.Start()
+	session, _ := mgo.Dial("localhost:27017")
+	defer session.Close()
 
-	makeDbDirty()
+	makeDbDirty(session)
 
 	options := make(map[string][]string)
 	options["only"] = []string{"animals"}
 	m.Clean(options)
 	m.Close()
 
-	count_of_people := CountRows("test", "people")
-	count_of_animals := CountRows("test", "animals")	
+	countOfPeople := CountRows("test", "people", session)
+	countOfAnimals := CountRows("test", "animals", session)
 
-	if count_of_people == 0 {
+	if countOfPeople == 0 {
 		t.Errorf("Expected people collection to not be deleted")
 	}
 
-	if count_of_animals != 0 {
+	if countOfAnimals != 0 {
 		t.Errorf("Expected animals to be deleted")
 	}
 }
 
 func TestMongoCleanExcept(t *testing.T) {
 	m, _ := NewCleaningGopher("mongo", mongoStartOptions)
-	m.Start()
-	
-	makeDbDirty()
-	
+	session, _ := mgo.Dial("localhost:27017")
+	defer session.Close()
+
+	makeDbDirty(session)
+
 	options := make(map[string][]string)
 	options["except"] = []string{"animals"}
 	m.Clean(options)
 	m.Close()
 
-	count_of_animals := CountRows("test", "animals")
-	count_of_people := CountRows("test", "people")
+	countOfAnimals := CountRows("test", "animals", session)
+	countOfPeople := CountRows("test", "people", session)
 
-	if count_of_animals == 0 {
+	if countOfAnimals == 0 {
 		t.Errorf("Expected animals to not be deleted")
 	}
-	if count_of_people != 0 {
+	if countOfPeople != 0 {
 		t.Errorf("Expected people to be deleted")
 	}
 }
 
 func TestNewCleaningGopherMongoInvalidOptionsAreIgnored(t *testing.T) {
 	m, _ := NewCleaningGopher("mongo", mongoStartOptions)
-	m.Start()
+	session, _ := mgo.Dial("localhost:27017")
+	defer session.Close()
 
-	makeDbDirty()
+	makeDbDirty(session)
 
 	options := make(map[string][]string)
 	options["invalid"] = []string{"animals"}
 	m.Clean(options)
 	m.Close()
 
-	count_of_animals := CountRows("test", "animals")
-	count_of_people := CountRows("test", "people")
+	countOfAnimals := CountRows("test", "animals", session)
+	countOfPeople := CountRows("test", "people", session)
 
-	if count_of_animals != 0 {
+	if countOfAnimals != 0 {
 		t.Errorf("Expected animals to be deleted")
 	}
-	if count_of_people != 0 {
+	if countOfPeople != 0 {
 		t.Errorf("Expected people to be deleted")
 	}
 }
 
-func TestNewCleaningGopherMongoWithMissingDbName(t *testing.T){
-	dbIncorrectOptions := map[string]string{"host":"localhost", "port": "27017"}
+func TestNewCleaningGopherMongoWithMissingDbName(t *testing.T) {
+	dbIncorrectOptions := map[string]string{"host": "localhost", "port": "27017"}
 	_, err := NewCleaningGopher("mongo", dbIncorrectOptions)
 
 	if err == nil {
@@ -131,29 +134,30 @@ func TestNewCleaningGopherMongoWithMissingDbName(t *testing.T){
 	}
 }
 
-func TestMongoCleanTwice(t *testing.T){
+func TestMongoCleanTwice(t *testing.T) {
 	m, _ := NewCleaningGopher("mongo", mongoStartOptions)
-	m.Start()
+	session, _ := mgo.Dial("localhost:27017")
+	defer session.Close()
 
-	makeDbDirty()
+	makeDbDirty(session)
 
 	m.Clean(nil)
 
-	count_of_people := CountRows("test", "people")
-	count_of_animals := CountRows("test", "animals")	
+	countOfPeople := CountRows("test", "people", session)
+	countOfAnimals := CountRows("test", "animals", session)
 
-	if count_of_animals != 0 || count_of_people != 0{
+	if countOfAnimals != 0 || countOfPeople != 0 {
 		t.Errorf("Expected db to be empty")
 	}
 
-	makeDbDirty()
+	makeDbDirty(session)
 
 	m.Clean(nil)
 
-	count_of_people = CountRows("test", "people")
-	count_of_animals = CountRows("test", "animals")	
+	countOfPeople = CountRows("test", "people", session)
+	countOfAnimals = CountRows("test", "animals", session)
 
-	if count_of_animals != 0 || count_of_people != 0{
+	if countOfAnimals != 0 || countOfPeople != 0 {
 		t.Errorf("Expected db to be empty")
 	}
 

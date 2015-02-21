@@ -6,17 +6,17 @@ import (
 )
 
 type Person struct {
-  Name  string
-  Phone string
+	Name  string
+	Phone string
 }
 
 type Animal struct {
-  Kind      string
-  Character string
+	Kind      string
+	Character string
 }
 
 func TestNewCleaningGopherMongoWithNonExistingAdapter(t *testing.T) {
-  options := map[string]string{"user":"root", "dbname": "dbname", "host":"localhost", "port":"27011"}
+	options := map[string]string{"user": "root", "dbname": "dbname", "host": "localhost", "port": "27011"}
 
 	_, err := NewCleaningGopher("gopher", options)
 
@@ -26,15 +26,23 @@ func TestNewCleaningGopherMongoWithNonExistingAdapter(t *testing.T) {
 }
 
 func TestWhenAdapterIsMongoThereIsMongoInstance(t *testing.T) {
-  options := map[string]string{"user":"root", "dbname": "dbname", "host":"localhost", "port":"27011"}
+	options := map[string]string{"user": "root", "dbname": "dbname", "host": "localhost", "port": "27011"}
 
-	gopher_cleaner, _ := NewCleaningGopher("mongo", options)
-	mongo_inst, _ := NewMongoCleaningGopher(options)
-	if reflect.TypeOf(gopher_cleaner) != reflect.TypeOf(mongo_inst) {
-		t.Error("Expected type Mongo got %s", reflect.TypeOf(gopher_cleaner))
+	gopherCleaner, _ := NewCleaningGopher("mongo", options)
+	mongoInst, _ := NewMongoCleaningGopher(options)
+	if reflect.TypeOf(gopherCleaner) != reflect.TypeOf(mongoInst) {
+		t.Error("Expected type Mongo got %s", reflect.TypeOf(gopherCleaner))
 	}
 }
 
-func TestNewCleaningGopherIsMysql(t *testing.T) {}
+func TestNewCleaningGopherIsMysql(t *testing.T) {
+	options := map[string]string{"user": "root", "dbname": "dbname", "host": "localhost"}
+
+	gopherCleaner, _ := NewCleaningGopher("mysql", options)
+	mysqlInst, _ := NewMysqlCleaningGopher(options)
+	if reflect.TypeOf(gopherCleaner) != reflect.TypeOf(mysqlInst) {
+		t.Error("Expected type Mongo got %s", reflect.TypeOf(gopherCleaner))
+	}
+}
 
 func TestNewCleaningGopherIsRedis(t *testing.T) {}

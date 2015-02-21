@@ -2,8 +2,8 @@ package clean_like_gopher
 
 import (
 	"gopkg.in/mgo.v2"
-	"time"
 	"gopkg.in/mgo.v2/bson"
+	"time"
 )
 
 /*
@@ -13,59 +13,56 @@ import (
 */
 type Mongo struct {
 	session *mgo.Session
-	DbName  string
+	dbName  string
 }
 
 func NewMongoCleaningGopher(options map[string]string) (*Mongo, error) {
 	host, ok := options["host"]
-	if !ok{
+	if !ok {
 		host = "@localhost"
 	} else {
 		host = host
 	}
 
 	port, ok := options["port"]
-	if !ok{
+	if !ok {
 		port = ""
 	} else {
 		port = ":" + port
 	}
-	
+
 	dbName, ok := options["dbName"]
-	if !ok{
+	if !ok {
 		return nil, &GopherError{Message: "missing db name!"}
 	} else {
 		dbName = dbName
 	}
 
 	username, ok := options["username"]
-	if !ok{
+	if !ok {
 		username = ""
-	} else{
+	} else {
 		username = username
 	}
 
 	pass, ok := options["password"]
-	if !ok{
+	if !ok {
 		pass = ""
 	} else {
 		pass = ":" + pass + "@"
 	}
 
-	s, err := mgo.DialWithTimeout(username + pass + host + port, time.Duration(5)*time.Second)
+	s, err := mgo.DialWithTimeout(username+pass+host+port, time.Duration(5)*time.Second)
 	if err != nil {
 		return nil, err
 	} else {
-		return &Mongo{DbName: dbName, session: s}, nil
+		return &Mongo{dbName: dbName, session: s}, nil
 	}
 }
 
-// Connect to DB
-func (m *Mongo) Start() {}
-
 // Clean with Mongo adapter
 func (m *Mongo) Clean(options map[string][]string) {
-	db := m.session.DB(m.DbName)
+	db := m.session.DB(m.dbName)
 	collections, _ := db.CollectionNames()
 
 	for _, collection_name := range collections {
@@ -83,7 +80,6 @@ func (m Mongo) String() string {
 	return "Mongo adapter"
 }
 
-func (m Mongo) Close(){
+func (m Mongo) Close() {
 	m.session.Close()
 }
-

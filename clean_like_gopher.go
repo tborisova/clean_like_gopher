@@ -1,13 +1,12 @@
 package clean_like_gopher
 
-import(
+import (
 	"fmt"
 	"strings"
 )
 
 type Generic interface {
 	Clean(options map[string][]string)
-	Start()
 	Close()
 }
 
@@ -68,7 +67,7 @@ func CollectionCanBeDeleted(name string, options map[string][]string) bool {
 	return true
 }
 
-func SelectStrategy(options map[string][]string) string{
+func SelectStrategy(options map[string][]string) string {
 	if len(options) != 0 && len(options["stategy"]) != 0 {
 		return options["strategy"][0]
 	} else {

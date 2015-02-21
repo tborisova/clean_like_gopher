@@ -10,20 +10,15 @@ package clean_like_gopher
 //     _ "github.com/go-sql-driver/mysql"
 // )
 
-
-
-
 // func Ex(){
 //   // var DB, _ = sql.Open("mysql", "root:@/golangtest")
 //   // defer DB.Close()
-  
+
 //   // var age int
 //   // name := "foo"
-  
 
 //   // row := db.QueryRow("SELECT age FROM users WHERE name = ?", name)
 //   // err = row.Scan(&age)
-
 
 // /*
 //   check how many rows
@@ -53,7 +48,7 @@ package clean_like_gopher
 //   //     panic(err.Error()) // proper error handling instead of panic in your app
 //   // }
 //   // defer stmtIns.Close() // Close the statement when we leave main() / the program terminates
-//   // _, err = stmtIns.Exec() 
+//   // _, err = stmtIns.Exec()
 //   // if err != nil {
 //   //         panic(err.Error()) // proper error handling instead of panic in your app
 //   //     }
@@ -64,9 +59,9 @@ package clean_like_gopher
 //   //     panic(err.Error()) // proper error handling instead of panic in your app
 //   // }
 //   // defer stmtIns.Close() // Close the statement when we leave main() / the program terminates
-//   // _, err = stmtIns.Exec() 
+//   // _, err = stmtIns.Exec()
 //   // if err != nil {
 //   //         panic(err.Error()) // proper error handling instead of panic in your app
 //   //     }
-   
+
 // }
