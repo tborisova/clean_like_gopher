@@ -6,6 +6,16 @@ import (
 	"testing"
 )
 
+type Person struct {
+	Name  string
+	Phone string
+}
+
+type Animal struct {
+	Kind      string
+	Character string
+}
+
 var mongoStartOptions = map[string]string{"host": "localhost", "dbName": "test", "port": "27017"}
 
 func makeDbDirty(session *mgo.Session) {
