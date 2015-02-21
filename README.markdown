@@ -35,6 +35,10 @@ like gopher is to ensure that the DB is clean between tests.
   m.Close() // after all specs or after each spec
 ```
 
+## Examples: 
+ 
+  * [clean-like-gopher-example](https://github.com/tborisova/examples-cleaning-gopher)
+  
 Availabe strategies:
 
   * For mysql:
