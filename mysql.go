@@ -16,6 +16,7 @@ type Mysql struct {
 	dbName string
 }
 
+// creates new cleaner for mysql driver
 func NewMysqlCleaningGopher(options map[string]string) (*Mysql, error) {
 	hostWithPort, ok := options["host_port"]
 	if !ok {
@@ -67,6 +68,7 @@ func (m *Mysql) Clean(options map[string][]string) {
 	}
 }
 
+// clean with specified strategy
 func (m *Mysql) CleanWithStatment(options map[string][]string, stm string) error {
 	tablesNames := m.TableNames()
 
@@ -94,6 +96,7 @@ func (m Mysql) String() string {
 	return "Mysql adapter, " + "database name: " + m.dbName
 }
 
+// returns all table names
 func (m Mysql) TableNames() []string {
 	var name string
 	tablesNames := make([]string, 0)
@@ -108,6 +111,7 @@ func (m Mysql) TableNames() []string {
 	return tablesNames
 }
 
+// closes the connection to the DB
 func (m Mysql) Close() {
 	m.sqlDb.Close()
 }

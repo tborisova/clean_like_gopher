@@ -16,6 +16,7 @@ type Mongo struct {
 	dbName  string
 }
 
+// creates new cleaner for mongo driver
 func NewMongoCleaningGopher(options map[string]string) (*Mongo, error) {
 	host, ok := options["host"]
 	if !ok {
@@ -80,6 +81,7 @@ func (m Mongo) String() string {
 	return "Mongo adapter"
 }
 
+// closes the connection to the DB
 func (m Mongo) Close() {
 	m.session.Close()
 }

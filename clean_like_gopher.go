@@ -47,6 +47,7 @@ func stringInSlice(a string, list []string) bool {
 	return false
 }
 
+// checks if collection can be deleted by selected options
 func CollectionCanBeDeleted(name string, options map[string][]string) bool {
 	if strings.Contains(name, "system") {
 		return false
@@ -67,6 +68,7 @@ func CollectionCanBeDeleted(name string, options map[string][]string) bool {
 	return true
 }
 
+// returns specified strategy 
 func SelectStrategy(options map[string][]string) string {
 	if len(options) != 0 && len(options["stategy"]) != 0 {
 		return options["strategy"][0]
