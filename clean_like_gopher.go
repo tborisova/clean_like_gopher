@@ -21,18 +21,18 @@ func (e *GopherError) Error() string {
 // Creates new Cleaner based on the chosen adapter
 func NewCleaningGopher(adapter string, options map[string]string) (Generic, error) {
 	if adapter == "mongo" {
-		ad, err := NewMongoCleaningGopher(options)
-		return ad, err
+		cleaner, err := NewMongoCleaningGopher(options)
+		return cleaner, err
 	}
 
 	if adapter == "mysql" {
-		ad, err := NewMysqlCleaningGopher(options)
-		return ad, err
+		cleaner, err := NewMysqlCleaningGopher(options)
+		return cleaner, err
 	}
 
 	if adapter == "redis" {
-		ad := NewRedisCleaningGopher(options)
-		return ad, nil
+		cleaner := NewRedisCleaningGopher(options)
+		return cleaner, nil
 	}
 
 	return nil, &GopherError{Message: fmt.Sprintf("Adapter %s is not supported!", adapter)}
