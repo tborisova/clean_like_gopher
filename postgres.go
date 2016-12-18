@@ -2,18 +2,19 @@ package clean_like_gopher
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
+	"fmt"
+	_ "github.com/lib/pq"
 )
 
-type Mysql struct {
+type Postgres struct {
 	db *sql.DB
 }
 
 // creates new cleaner for mysql driver
-func NewMysqlConnection(options map[string]string) (*Mysql, error) {
+func NewPostgresConnection(options map[string]string) (*Postgres, error) {
 	hostWithPort, ok := options["host_port"]
 	if !ok {
-		hostWithPort = ""
+		hostWithPort = "localhost:5432"
 	}
 
 	username, ok := options["username"]
@@ -26,9 +27,9 @@ func NewMysqlConnection(options map[string]string) (*Mysql, error) {
 		password = ""
 	}
 
-	protocol, ok := options["protocol"]
+	connParams, ok := options["connParams"]
 	if !ok {
-		protocol = ""
+		connParams = ""
 	}
 
 	dbName, ok := options["dbName"]
@@ -36,20 +37,21 @@ func NewMysqlConnection(options map[string]string) (*Mysql, error) {
 		return nil, &GopherError{"missing db name!"}
 	}
 
-	conn, err := sql.Open("mysql", username+":"+password+"@"+protocol+hostWithPort+"/"+dbName)
+	connectionUrl := fmt.Sprintf("postgres://%s:%s@%s/%s?%s", username, password, hostWithPort, dbName, connParams)
+	conn, err := sql.Open("postgres", connectionUrl)
 
 	if err != nil {
 		return nil, err
 	} else {
-		return &Mysql{db: conn}, nil
+		return &Postgres{db: conn}, nil
 	}
 }
 
 // returns all table names
-func (m *Mysql) TableNames() []string {
+func (p *Postgres) TableNames() []string {
 	var name string
 	tablesNames := make([]string, 0)
-	rows, _ := m.db.Query("show tables")
+	rows, _ := p.db.Query("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema'")
 
 	for rows.Next() {
 		_ = rows.Scan(&name)
@@ -60,6 +62,6 @@ func (m *Mysql) TableNames() []string {
 	return tablesNames
 }
 
-func (m *Mysql) DB() *sql.DB {
-	return m.db
+func (p *Postgres) DB() *sql.DB {
+	return p.db
 }

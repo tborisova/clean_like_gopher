@@ -25,14 +25,5 @@ func TestWhenAdapterIsMongoThereIsMongoInstance(t *testing.T) {
 	}
 }
 
-func TestNewCleaningGopherIsMysql(t *testing.T) {
-	options := map[string]string{"user": "root", "dbname": "dbname", "host": "localhost"}
-
-	gopherCleaner, _ := NewCleaningGopher("mysql", options)
-	mysqlInst, _ := NewMysqlCleaningGopher(options)
-	if reflect.TypeOf(gopherCleaner) != reflect.TypeOf(mysqlInst) {
-		t.Error("Expected type Mongo got %s", reflect.TypeOf(gopherCleaner))
-	}
-}
-
+func TestNewCleaningGopherIsMysql(t *testing.T) {}
 func TestNewCleaningGopherIsRedis(t *testing.T) {}

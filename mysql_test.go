@@ -2,11 +2,16 @@ package clean_like_gopher
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"testing"
 )
 
-var mysqlStartOptions = map[string]string{"username": "root", "dbName": "golangtest"}
+const MyUser = "root"
+const MyPw = ""
+const MyDbName = "golangtest"
+
+var mysqlStartOptions = map[string]string{"username": MyUser, "password": MyPw, "dbName": MyDbName}
 
 func makeMysqlDbDirty(db *sql.DB) {
 
@@ -33,7 +38,7 @@ func makeMysqlDbDirty(db *sql.DB) {
 
 func TestMysqlCleanOnly(t *testing.T) {
 	m, _ := NewCleaningGopher("mysql", mysqlStartOptions)
-	db, _ := sql.Open("mysql", "root:@/golangtest")
+	db, _ := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s", MyUser, MyPw, MyDbName))
 	defer db.Close()
 
 	makeMysqlDbDirty(db)
@@ -68,7 +73,7 @@ func TestMysqlCleanOnly(t *testing.T) {
 
 func TestMysqlCleanExcept(t *testing.T) {
 	m, _ := NewCleaningGopher("mysql", mysqlStartOptions)
-	db, _ := sql.Open("mysql", "root:@/golangtest")
+	db, _ := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s", MyUser, MyPw, MyDbName))
 	defer db.Close()
 
 	makeMysqlDbDirty(db)
@@ -103,7 +108,7 @@ func TestMysqlCleanExcept(t *testing.T) {
 
 func TestMysqlCleanAll(t *testing.T) {
 	m, _ := NewCleaningGopher("mysql", mysqlStartOptions)
-	db, _ := sql.Open("mysql", "root:@/golangtest")
+	db, _ := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s", MyUser, MyPw, MyDbName))
 	defer db.Close()
 
 	makeMysqlDbDirty(db)
@@ -135,7 +140,7 @@ func TestMysqlCleanAll(t *testing.T) {
 }
 
 func TestMysqlNewCleaningGopherWithIncorrectDbOptions(t *testing.T) {
-	StartOptions := map[string]string{"dbName": "golangtest"}
+	StartOptions := map[string]string{"dbName": MyDbName}
 
 	_, err := NewCleaningGopher("mysql", StartOptions)
 
@@ -154,7 +159,7 @@ func TestMysqlNewCleaningGopherWithIncorrectDbOptions(t *testing.T) {
 
 func TestMysqlCleanShouldWorkTwice(t *testing.T) {
 	m, _ := NewCleaningGopher("mysql", mysqlStartOptions)
-	db, _ := sql.Open("mysql", "root:@/golangtest")
+	db, _ := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s", MyUser, MyPw, MyDbName))
 	defer db.Close()
 
 	makeMysqlDbDirty(db)

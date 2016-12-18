@@ -13,7 +13,8 @@ like gopher is to ensure that the DB is clean between tests.
  
  
 ## Supported drivers
-   * [database/sql](http://golang.org/pkg/database/sql/) 
+   * [mysql](github.com/go-sql-driver/mysql)
+   * [postgres](github.com/lib/pq)
    * [redis](https://github.com/go-redis/redis) - in future development
    * [mongo](https://labix.org/mgo)
 
@@ -43,7 +44,7 @@ like gopher is to ensure that the DB is clean between tests.
   
 Availabe strategies:
 
-  * For mysql:
+  * For mysql/postgres:
     * truncation(default), deletion, transaction (in future development)
   * For mongo:
     * truncation - default

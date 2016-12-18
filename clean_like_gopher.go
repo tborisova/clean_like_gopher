@@ -25,8 +25,8 @@ func NewCleaningGopher(adapter string, options map[string]string) (Generic, erro
 		return cleaner, err
 	}
 
-	if adapter == "mysql" {
-		cleaner, err := NewMysqlCleaningGopher(options)
+	if adapter == "mysql" || adapter == "postgres" {
+		cleaner, err := NewTruncateableSqlCleaningGopher(adapter, options)
 		return cleaner, err
 	}
 
@@ -68,7 +68,7 @@ func CollectionCanBeDeleted(name string, options map[string][]string) bool {
 	return true
 }
 
-// returns specified strategy 
+// returns specified strategy
 func SelectStrategy(options map[string][]string) string {
 	if len(options) != 0 && len(options["stategy"]) != 0 {
 		return options["strategy"][0]
