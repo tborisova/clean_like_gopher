@@ -25,7 +25,7 @@ like gopher is to ensure that the DB is clean between tests.
 ## Usage
 
 ```go
-  import 'github/tborisova/clean_like_gopher'
+  import 'github.com/tborisova/clean_like_gopher'
   ...
   
   options := map[string]string{"host": "localhost", "dbName": "test", "port": "27017"}
